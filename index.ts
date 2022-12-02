@@ -1,26 +1,21 @@
-import express from 'express';
-const { graphqlHTTP } = require('express-graphql');
-const { buildSchema } = require('graphql');
-require('dotenv').config();
+import express from "express";
+import { graphqlHTTP } from "express-graphql";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { typeDefs } from './schema/type-defs';
+import { resolvers } from "./schema/resolvers";
+import cors from 'cors';
 
-
-const schema = buildSchema(`
-    type Query {
-      hello: String
-    }
-`);
-
-const root = {
-  hello: () => {
-    return "Hello!";
-  }
-};
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const app = express();
-app.use('/graphql', graphqlHTTP({
-  schema,
-  rootValue: root,
-  graphiql: true
-}));
+
+app.use(cors());
+
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema,
+    graphiql: false,
+  })
+);
 app.listen(4000);
-console.log("Running a GraphQL API server at http://localhost:4000/graphql");
