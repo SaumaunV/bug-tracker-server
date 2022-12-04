@@ -1,8 +1,8 @@
 
 export const typeDefs = `#graphql
     type Query {
-      hello: String
       users: [User!]
+      projects: [Project!]
     }
 
     type Mutation {
@@ -18,7 +18,6 @@ export const typeDefs = `#graphql
       id: ID!
       name: String!
       description: String
-      users: [User!]
     }
 `;
 

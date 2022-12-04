@@ -1,7 +1,5 @@
-import { Client } from 'pg';
+import { client } from '../config/db'
 require("dotenv").config();
-
-const client = new Client(process.env.DATABASE_URL);
 
 type User = {
   id: string;
@@ -10,16 +8,18 @@ type User = {
 
 export const resolvers = {
   Query: {
-    hello: () => "hello there",
     users: async () => {
       await client.connect();
       const result = await client.query("Select id, email from users");
       await client.end();
       return result.rows;
-      // return result.rows.map((user: User) => {
-      //   return { id: user.id, email: user.email };
-      // });
     },
-  },
+    projects: async () => {
+      await client.connect();
+      const result = await client.query("Select * from projects");
+      await client.end();
+      return result.rows;
+    },
+  }
 };
 
