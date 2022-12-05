@@ -1,4 +1,10 @@
-import { Client } from "pg";
+import { Pool } from "pg";
 require("dotenv").config();
 
-export const client = new Client(process.env.DATABASE_URL);
+export const pool = new Pool({
+  host: process.env.HOST,
+  database: process.env.DATABASE,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+});
+
