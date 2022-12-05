@@ -1,4 +1,4 @@
-import { client } from '../config/db'
+import { pool } from '../config/db'
 require("dotenv").config();
 
 type User = {
@@ -6,20 +6,30 @@ type User = {
   email: string;
 };
 
+type Project = {
+  input: {
+    name: string;
+    description: string;
+  };
+};
+
 export const resolvers = {
   Query: {
     users: async () => {
-      await client.connect();
-      const result = await client.query("Select id, email from users");
-      await client.end();
+      const result = await pool.query("Select id, email from users");
       return result.rows;
     },
     projects: async () => {
-      await client.connect();
-      const result = await client.query("Select * from projects");
-      await client.end();
+      const result = await pool.query("Select * from projects");
       return result.rows;
     },
+  },
+  Mutation: {
+    createProject: async (_: any,  args: Project) => {
+      const result = await pool.query(`INSERT INTO projects("name", "description") VALUES(${args.input.name}, ${args.input.description});`);
+      return result.rows;
+    }
   }
+
 };
 

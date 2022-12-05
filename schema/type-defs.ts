@@ -5,8 +5,14 @@ export const typeDefs = `#graphql
       projects: [Project!]
     }
 
+    input CreateProjectInput {
+      name: String
+      description: String
+    }
+
     type Mutation {
-      createProject: Project
+      createProject(input: CreateProjectInput!): Project
+      deleteProject(id: ID!): Project
     }
 
     type User {
