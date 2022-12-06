@@ -26,8 +26,16 @@ export const resolvers = {
   },
   Mutation: {
     createProject: async (_: any,  args: Project) => {
-      const result = await pool.query(`INSERT INTO projects("name", "description") VALUES(${args.input.name}, ${args.input.description});`);
-      return result.rows;
+      const project = args.input;
+      const result = await pool.query(`INSERT INTO projects("name", "description") VALUES('${args.input.name}', '${args.input.description}');`);
+      return project;
+    },
+    deleteProject: async (_: any, args: {id: string}) => {
+      const id = args.id;
+      await pool.query(
+        `DELETE FROM projects WHERE id = '${ id }'`
+      );
+      return null;
     }
   }
 
