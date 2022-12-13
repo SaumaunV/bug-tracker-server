@@ -3,6 +3,7 @@ export const typeDefs = `#graphql
     type Query {
       users: [User!]
       projects: [Project!]
+      tickets: [Ticket!]
     }
 
     input CreateProjectInput {
@@ -10,9 +11,19 @@ export const typeDefs = `#graphql
       description: String
     }
 
+    input CreateTicketInput {
+      name: String
+      description: String
+      status: String!
+      priority: String!
+      developer_id: ID!
+    }
+
     type Mutation {
       createProject(input: CreateProjectInput!): Project
       deleteProject(id: ID!): Project
+      createTicket(input: CreateTicketInput!): Ticket
+      deleteTicket(id: ID!): Ticket
     }
 
     type User {
@@ -24,6 +35,16 @@ export const typeDefs = `#graphql
       id: ID!
       name: String!
       description: String
+    }
+
+    type Ticket {
+      id: ID!
+      name: String!
+      description: String!
+      type: String!
+      status: String!
+      priority: String!
+      developer_id: ID!
     }
 `;
 
