@@ -1,15 +1,21 @@
 import { pool } from '../config/db'
 require("dotenv").config();
 
-type User = {
-  id: string;
-  email: string;
-};
-
 type Project = {
   input: {
     name: string;
     description: string;
+  };
+};
+
+type Ticket = {
+  input: {
+    name: string;
+    description: string;
+    type: string;
+    status: string;
+    priority: string;
+    developer_id: string;
   };
 };
 
@@ -25,19 +31,30 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createProject: async (_: any,  args: Project) => {
+    createProject: async (_: any, args: Project) => {
       const project = args.input;
-      const result = await pool.query(`INSERT INTO projects("name", "description") VALUES('${args.input.name}', '${args.input.description}');`);
+      await pool.query(
+        `INSERT INTO projects(name, description) VALUES('${args.input.name}', '${args.input.description}');`
+      );
       return project;
     },
-    deleteProject: async (_: any, args: {id: string}) => {
-      const id = args.id;
+    createTicket: async (_: any, args: Ticket) => {
+      const ticket = args.input;
       await pool.query(
-        `DELETE FROM projects WHERE id = '${ id }'`
+        `INSERT INTO projects(name, description, type, status, priority, developer_id) VALUES('${args.input.name}', '${args.input.description}', '${args.input.type}', '${args.input.status}', '${args.input.priority}', '${args.input.developer_id}');`
       );
+      return ticket;
+    },
+    deleteProject: async (_: any, args: { id: string }) => {
+      const id = args.id;
+      await pool.query(`DELETE FROM projects WHERE id = '${id}'`);
       return null;
-    }
-  }
-
+    },
+    deleteTicket: async (_: any, args: { id: number }) => {
+      const id = args.id;
+      await pool.query(`DELETE FROM tickets WHERE id = '${id}'`);
+      return null;
+    },
+  },
 };
 
