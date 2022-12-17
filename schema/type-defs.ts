@@ -12,11 +12,12 @@ export const typeDefs = `#graphql
     }
 
     input CreateTicketInput {
-      name: String
-      description: String
+      name: String!
+      description: String!
+      type: String!
       status: String!
       priority: String!
-      developer_id: ID!
+      developer_id: ID = null
     }
 
     type Mutation {
@@ -44,7 +45,7 @@ export const typeDefs = `#graphql
       type: String!
       status: String!
       priority: String!
-      developer_id: ID!
+      developer_id: ID
     }
 `;
 
