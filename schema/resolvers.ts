@@ -37,32 +37,40 @@ export const resolvers = {
   Mutation: {
     createProject: async (_: any, args: Project) => {
       const project = args.input;
-      const query = `INSERT INTO projects(name, description) VALUES($1, $2);`;
-      const values = [`'${args.input.name}'`, `'${args.input.description}'`];
+      const query = 'INSERT INTO projects(name, description) VALUES($1, $2);';
+      const values = [args.input.name, args.input.description];
       await pool.query(query, values);
       return project;
     },
     createTicket: async (_: any, args: Ticket) => {
       const ticket = args.input;
-      await pool.query(
-        `INSERT INTO tickets(name, description, type, status, priority ${
-          args.input.developer_id ? ", developer_id" : ""
-        }) VALUES('${args.input.name}', '${args.input.description}', '${
-          args.input.type
-        }', '${args.input.status}', '${args.input.priority}' ${
-          args.input.developer_id ? `, '${args.input.developer_id}'` : ''
-        });`
-      );
+      const developer_id = args.input.developer_id
+      const query = `INSERT INTO tickets(name, description, type, status, priority ${
+        developer_id ? ", developer_id" : ""
+      }) VALUES($1, $2, $3, $4, $5 ${
+        developer_id ? ", $6" : ""
+      });`;
+      const values = [
+        ticket.name,
+        ticket.description,
+        ticket.type,
+        ticket.status,
+        ticket.priority,
+        ticket.developer_id
+      ];
+      await pool.query(query, values);
       return ticket;
     },
     deleteProject: async (_: any, args: { id: string }) => {
-      const id = args.id;
-      await pool.query(`DELETE FROM projects WHERE id = '${id}'`);
+      const query = "DELETE FROM projects WHERE id = $1";
+      const values = [args.id]
+      await pool.query(query, values);
       return null;
     },
     deleteTicket: async (_: any, args: { id: number }) => {
-      const id = args.id;
-      await pool.query(`DELETE FROM tickets WHERE id = '${id}'`);
+      const query = "DELETE FROM tickets WHERE id = $1";
+      const values = [args.id];
+      await pool.query(query, values);
       return null;
     },
   },
