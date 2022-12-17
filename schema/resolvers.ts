@@ -15,7 +15,7 @@ type Ticket = {
     type: string;
     status: string;
     priority: string;
-    developer_id: string;
+    developer_id: string | null;
   };
 };
 
@@ -29,19 +29,29 @@ export const resolvers = {
       const result = await pool.query("Select * from projects");
       return result.rows;
     },
+    tickets: async () => {
+      const result = await pool.query("Select * from tickets");
+      return result.rows;
+    }
   },
   Mutation: {
     createProject: async (_: any, args: Project) => {
       const project = args.input;
-      await pool.query(
-        `INSERT INTO projects(name, description) VALUES('${args.input.name}', '${args.input.description}');`
-      );
+      const query = `INSERT INTO projects(name, description) VALUES($1, $2);`;
+      const values = [`'${args.input.name}'`, `'${args.input.description}'`];
+      await pool.query(query, values);
       return project;
     },
     createTicket: async (_: any, args: Ticket) => {
       const ticket = args.input;
       await pool.query(
-        `INSERT INTO projects(name, description, type, status, priority, developer_id) VALUES('${args.input.name}', '${args.input.description}', '${args.input.type}', '${args.input.status}', '${args.input.priority}', '${args.input.developer_id}');`
+        `INSERT INTO tickets(name, description, type, status, priority ${
+          args.input.developer_id ? ", developer_id" : ""
+        }) VALUES('${args.input.name}', '${args.input.description}', '${
+          args.input.type
+        }', '${args.input.status}', '${args.input.priority}' ${
+          args.input.developer_id ? `, '${args.input.developer_id}'` : ''
+        });`
       );
       return ticket;
     },
