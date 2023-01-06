@@ -1,13 +1,18 @@
 
 export const typeDefs = `#graphql
     type Query {
+      user(id: ID!): User
       users: [User!]
-      projects: [Project!]
+      project(id: ID!): Project!
       tickets: [Ticket!]
+      projectTickets(id: ID!): [Ticket!]
+      userTickets(id: ID!): [Ticket!]
+      ticket(id: ID!): Ticket!
     }
 
     input CreateProjectInput {
-      name: String
+      user_id: String!
+      name: String!
       description: String
     }
 
@@ -17,7 +22,7 @@ export const typeDefs = `#graphql
       type: String!
       status: String!
       priority: String!
-      developer_id: ID = null
+      user_id: ID = null
     }
 
     type Mutation {
@@ -25,17 +30,23 @@ export const typeDefs = `#graphql
       deleteProject(id: ID!): Project
       createTicket(input: CreateTicketInput!): Ticket
       deleteTicket(id: ID!): Ticket
+      deleteUser(id: ID!): User
     }
 
     type User {
       id: ID!
+      username: String!
       email: String!
+      role: String!
+      projects: [Project!]
     }
 
     type Project {
       id: ID!
       name: String!
       description: String
+      users: [User!]
+      tickets: [Ticket!]
     }
 
     type Ticket {
