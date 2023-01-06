@@ -72,10 +72,9 @@ export const resolvers = {
       return result.rows;
     },
     ticket: async (_: any, args: { id: string }) => {
-      const result = await pool.query(
-        "Select * from tickets where id = $1",
-        [args.id]
-      );
+      const result = await pool.query("Select * from tickets where id = $1", [
+        args.id,
+      ]);
       return result.rows[0];
     },
   },
@@ -129,6 +128,12 @@ export const resolvers = {
     },
     deleteTicket: async (_: any, args: { id: number }) => {
       const query = "DELETE FROM tickets WHERE id = $1";
+      const values = [args.id];
+      await pool.query(query, values);
+      return null;
+    },
+    deleteUser: async (_: any, args: { id: number }) => {
+      const query = "DELETE FROM users WHERE id = $1";
       const values = [args.id];
       await pool.query(query, values);
       return null;
