@@ -33,6 +33,7 @@ export const typeDefs = `#graphql
       createTicket(input: CreateTicketInput!): Ticket
       deleteTicket(id: ID!): Ticket
       deleteUser(id: ID!): User
+      updateUser(role: String!, id: ID!): User
     }
 
     type User {

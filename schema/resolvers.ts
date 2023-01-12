@@ -158,11 +158,15 @@ export const resolvers = {
       await pool.query(query, values);
       return null;
     },
-    deleteUser: async (_: any, args: { id: number }) => {
+    deleteUser: async (_: any, args: { id: string }) => {
       const query = "DELETE FROM users WHERE id = $1";
       const values = [args.id];
       await pool.query(query, values);
       return null;
+    },
+    updateUser: async (_: any, args: { role: string, id: string }) => {
+      const user = await pool.query("update users set role = $1 where id = $2 returning *", [args.role, args.id]);
+      return user.rows[0];
     },
   },
 };
