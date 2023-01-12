@@ -1,3 +1,4 @@
+import { GraphQLScalarType, Kind } from 'graphql';
 import { pool } from '../config/db'
 require("dotenv").config();
 
@@ -17,10 +18,29 @@ type Ticket = {
     status: string;
     priority: string;
     user_id: string | null;
+    project_id: string | null;
   };
 };
 
+export const dateScalar = new GraphQLScalarType({
+  name: 'Date',
+  description: 'Date custom scalar type',
+  serialize(value: Date) {
+    return `${value.getMonth() + 1}/${value.getDate()}/${value.getFullYear()}`;
+  },
+  parseValue(value: number) {
+    return new Date(value);
+  },
+  parseLiteral(ast) {
+    if(ast.kind === Kind.INT) {
+      return new Date(parseInt(ast.value, 10));
+    }
+    return null;
+  }
+});
+
 export const resolvers = {
+  Date: dateScalar,
   Query: {
     user: async (_: any, args: { id: string }) => {
       const queryProjects = `Select p.* FROM projects p 
@@ -32,10 +52,15 @@ export const resolvers = {
         [args.id]
       );
       const projects = await pool.query(queryProjects, [args.id]);
-      return { ...user.rows[0], projects: projects.rows };
+      const projectsID = projects.rows.map(project => project.id);
+      const totalTickets = await pool.query(
+        "Select * from tickets where project_id = any($1)",
+        ["{" + projectsID.join(",") + "}"]
+      );
+      return { ...user.rows[0], projects: projects.rows, allTickets: totalTickets.rows };
     },
     users: async () => {
-      const result = await pool.query("Select id, email from users");
+      const result = await pool.query("Select id, username, email, role from users");
       return result.rows;
     },
     project: async (_: any, args: { id: string }) => {
@@ -66,7 +91,7 @@ export const resolvers = {
     },
     userTickets: async (_: any, args: { id: string }) => {
       const result = await pool.query(
-        "Select * from tickets where user_id = $1",
+        "Select * from tickets where user_id in ($1)",
         [args.id]
       );
       return result.rows;
@@ -106,15 +131,16 @@ export const resolvers = {
     createTicket: async (_: any, args: Ticket) => {
       const ticket = args.input;
       const user_id = args.input.user_id;
-      const query = `INSERT INTO tickets(name, description, type, status, priority ${
-        user_id ? ", user_id" : ""
-      }) VALUES($1, $2, $3, $4, $5 ${user_id ? ", $6" : ""});`;
+      const query = `INSERT INTO tickets(name, description, type, status, priority, project_id
+        ${ user_id ? ", user_id" : ""})
+        VALUES($1, $2, $3, $4, $5, $6 ${user_id ? ", $7" : ""});`;
       const values = [
         ticket.name,
         ticket.description,
         ticket.type,
         ticket.status,
         ticket.priority,
+        ticket.project_id,
         ticket.user_id,
       ];
       await pool.query(query, values);
