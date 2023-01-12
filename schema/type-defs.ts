@@ -1,5 +1,6 @@
 
 export const typeDefs = `#graphql
+    scalar Date
     type Query {
       user(id: ID!): User
       users: [User!]
@@ -23,6 +24,7 @@ export const typeDefs = `#graphql
       status: String!
       priority: String!
       user_id: ID = null
+      project_id: ID!
     }
 
     type Mutation {
@@ -39,6 +41,7 @@ export const typeDefs = `#graphql
       email: String!
       role: String!
       projects: [Project!]
+      allTickets: [Ticket!]
     }
 
     type Project {
@@ -56,7 +59,9 @@ export const typeDefs = `#graphql
       type: String!
       status: String!
       priority: String!
-      developer_id: ID
+      created_at: Date!
+      user_id: ID
+      project_id: ID!
     }
 `;
 
