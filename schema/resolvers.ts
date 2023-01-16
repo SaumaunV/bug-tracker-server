@@ -12,6 +12,7 @@ type Project = {
 
 type Ticket = {
   input: {
+    id?: string;
     name: string;
     description: string;
     type: string;
@@ -52,15 +53,21 @@ export const resolvers = {
         [args.id]
       );
       const projects = await pool.query(queryProjects, [args.id]);
-      const projectsID = projects.rows.map(project => project.id);
+      const projectsID = projects.rows.map((project) => project.id);
       const totalTickets = await pool.query(
         "Select * from tickets where project_id = any($1)",
         ["{" + projectsID.join(",") + "}"]
       );
-      return { ...user.rows[0], projects: projects.rows, allTickets: totalTickets.rows };
+      return {
+        ...user.rows[0],
+        projects: projects.rows,
+        allTickets: totalTickets.rows,
+      };
     },
     users: async () => {
-      const result = await pool.query("Select id, username, email, role from users");
+      const result = await pool.query(
+        "Select id, username, email, role from users"
+      );
       return result.rows;
     },
     project: async (_: any, args: { id: string }) => {
@@ -132,7 +139,7 @@ export const resolvers = {
       const ticket = args.input;
       const user_id = args.input.user_id;
       const query = `INSERT INTO tickets(name, description, type, status, priority, project_id
-        ${ user_id ? ", user_id" : ""})
+        ${user_id ? ", user_id" : ""})
         VALUES($1, $2, $3, $4, $5, $6 ${user_id ? ", $7" : ""});`;
       const values = [
         ticket.name,
@@ -164,8 +171,27 @@ export const resolvers = {
       await pool.query(query, values);
       return null;
     },
-    updateUser: async (_: any, args: { role: string, id: string }) => {
-      const user = await pool.query("update users set role = $1 where id = $2 returning *", [args.role, args.id]);
+    updateUser: async (_: any, args: { role: string; id: string }) => {
+      const user = await pool.query(
+        "update users set role = $1 where id = $2 returning *",
+        [args.role, args.id]
+      );
+      return user.rows[0];
+    },
+    updateTicket: async (_: any, args: Ticket) => {
+      const ticket = args.input;
+      const query =
+        "update tickets set name = $1, description = $2, type = $3, status = $4, priority = $5, project_id = $6 user_id = $7 where id = $8 returning *";
+      const user = await pool.query(query, [
+        ticket.name,
+        ticket.description,
+        ticket.type,
+        ticket.status,
+        ticket.priority,
+        ticket.project_id,
+        ticket.user_id,
+        ticket.id
+      ]);
       return user.rows[0];
     },
   },
