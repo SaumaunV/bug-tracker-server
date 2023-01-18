@@ -194,6 +194,16 @@ export const resolvers = {
       ]);
       return user.rows[0];
     },
+    addUsers: async (_: any, args: {input: {project_id: string, user_ids: string[]}}) => {
+      const projectID = args.input.project_id;
+      args.input.user_ids.forEach((id) =>
+        pool.query(
+          "INSERT INTO user_projects(user_id, project_id) VALUES($1, $2)",
+          [id, projectID]
+        )
+      );
+      return null;
+    },
   },
 };
 

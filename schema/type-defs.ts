@@ -38,6 +38,11 @@ export const typeDefs = `#graphql
       project_id: ID!
     }
 
+    input AddUsersInput {
+      project_id: ID!
+      user_ids: [ID!]
+    }
+
     type Mutation {
       createProject(input: CreateProjectInput!): Project
       deleteProject(id: ID!): Project
@@ -46,6 +51,7 @@ export const typeDefs = `#graphql
       deleteUser(id: ID!): User
       updateUser(role: String!, id: ID!): User
       updateTicket(input: UpdateTicketInput!): Ticket
+      addUsers(input: AddUsersInput!): [User!]
     }
 
     type User {
