@@ -1,4 +1,87 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeDefs = void 0;
-exports.typeDefs = "#graphql\n    scalar Date\n    type Query {\n      user(id: ID!): User\n      users: [User!]\n      project(id: ID!): Project!\n      tickets: [Ticket!]\n      projectTickets(id: ID!): [Ticket!]\n      userTickets(id: ID!): [Ticket!]\n      ticket(id: ID!): Ticket!\n    }\n\n    input CreateProjectInput {\n      user_id: String!\n      name: String!\n      description: String\n    }\n\n    input CreateTicketInput {\n      name: String!\n      description: String!\n      type: String!\n      status: String!\n      priority: String!\n      user_id: ID = null\n      project_id: ID!\n    }\n\n    input UpdateTicketInput {\n      id: ID!\n      name: String!\n      description: String!\n      type: String!\n      status: String!\n      priority: String!\n      user_id: ID\n      project_id: ID!\n    }\n\n    input AddUsersInput {\n      project_id: ID!\n      user_ids: [ID!]\n    }\n\n    type Mutation {\n      createProject(input: CreateProjectInput!): Project\n      deleteProject(id: ID!): Project\n      createTicket(input: CreateTicketInput!): Ticket\n      deleteTicket(id: ID!): Ticket\n      deleteUser(id: ID!): User\n      updateUser(role: String!, id: ID!): User\n      updateTicket(input: UpdateTicketInput!): Ticket\n      addUsers(input: AddUsersInput!): [User!]\n    }\n\n    type User {\n      id: ID!\n      username: String!\n      email: String!\n      role: String!\n      projects: [Project!]\n      allTickets: [Ticket!]\n    }\n\n    type Project {\n      id: ID!\n      name: String!\n      description: String\n      users: [User!]\n      tickets: [Ticket!]\n    }\n\n    type Ticket {\n      id: ID!\n      name: String!\n      description: String!\n      type: String!\n      status: String!\n      priority: String!\n      created_at: Date!\n      user_id: ID\n      project_id: ID!\n    }\n";
+exports.typeDefs = `#graphql
+    scalar Date
+    type Query {
+      user(id: ID!): User
+      users: [User!]
+      project(id: ID!): Project!
+      tickets: [Ticket!]
+      projectTickets(id: ID!): [Ticket!]
+      userTickets(id: ID!): [Ticket!]
+      ticket(id: ID!): Ticket!
+    }
+
+    input CreateProjectInput {
+      user_id: String!
+      name: String!
+      description: String
+    }
+
+    input CreateTicketInput {
+      name: String!
+      description: String!
+      type: String!
+      status: String!
+      priority: String!
+      user_id: ID = null
+      project_id: ID!
+    }
+
+    input UpdateTicketInput {
+      id: ID!
+      name: String!
+      description: String!
+      type: String!
+      status: String!
+      priority: String!
+      user_id: ID
+      project_id: ID!
+    }
+
+    input AddUsersInput {
+      project_id: ID!
+      user_ids: [ID!]
+    }
+
+    type Mutation {
+      createProject(input: CreateProjectInput!): Project
+      deleteProject(id: ID!): Project
+      createTicket(input: CreateTicketInput!): Ticket
+      deleteTicket(id: ID!): Ticket
+      deleteUser(id: ID!): User
+      updateUser(role: String!, id: ID!): User
+      updateTicket(input: UpdateTicketInput!): Ticket
+      addUsers(input: AddUsersInput!): [User!]
+    }
+
+    type User {
+      id: ID!
+      username: String!
+      email: String!
+      role: String!
+      projects: [Project!]
+      allTickets: [Ticket!]
+    }
+
+    type Project {
+      id: ID!
+      name: String!
+      description: String
+      users: [User!]
+      tickets: [Ticket!]
+    }
+
+    type Ticket {
+      id: ID!
+      name: String!
+      description: String!
+      type: String!
+      status: String!
+      priority: String!
+      created_at: Date!
+      user_id: ID
+      project_id: ID!
+    }
+`;
