@@ -65,7 +65,6 @@ app.post("/login", (req, res, next) => {
     else {
       req.logIn(user, (err) => {
         if(err) return next(err);
-        console.log(req.user);
         const {id, username, email, role} = req.user!
         res.send({id, username, email, role});
       })
@@ -97,10 +96,8 @@ app.post("/register", async (req: RegisterRequest, res, next) => {
         else {
           req.logIn(user, (err) => {
             if (err) return next(err);
-            console.log(req.user);
             const { id, username, email, role } = req.user!;
             res.send({ id, username, email, role });
-            res.send(req.user);
           });
         }
       })(req, res, next);
@@ -114,9 +111,8 @@ app.post("/logout", (req, res, next) => {
   const sessionStore = req.sessionStore;
   sessionStore.destroy(req.sessionID, (error) => {
     if (error) {
-      console.log(error);
+      throw error;
     }
-    console.log('error 2');
     req.logOut((err) => next(err));
     res.clearCookie('connect.sid');
     res.json({ success: true });
