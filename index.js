@@ -34,7 +34,7 @@ app.use((0, cors_1.default)({
 }));
 app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
     schema,
-    graphiql: true,
+    graphiql: false,
 }));
 app.use((0, express_session_1.default)({
     store: new pgSession({ pool: db_1.pool }),
@@ -113,4 +113,4 @@ app.get("/user", (req, res) => {
     else
         res.json(null);
 });
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => console.log("server is running"));
