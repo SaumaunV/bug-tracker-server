@@ -29,7 +29,7 @@ const schema = (0, schema_1.makeExecutableSchema)({ typeDefs: type_defs_1.typeDe
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000',
+    origin: 'https://bug-tracker-red.vercel.app',
     credentials: true
 }));
 app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
