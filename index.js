@@ -39,8 +39,8 @@ app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
 app.use((0, express_session_1.default)({
     store: new pgSession({ pool: db_1.pool }),
     secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: { maxAge: 1209600000 },
 }));
 app.use(passport_1.default.initialize());
