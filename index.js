@@ -41,7 +41,6 @@ app.use((0, express_session_1.default)({
     secret: process.env.SECRET,
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 1209600000 },
 }));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
