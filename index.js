@@ -39,7 +39,7 @@ app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
 app.enable('trust proxy');
 app.use((0, express_session_1.default)({
     store: new pgSession({ pool: db_1.pool }),
-    secret: "",
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1209600000, sameSite: 'none', secure: true }
