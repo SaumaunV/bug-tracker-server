@@ -29,7 +29,7 @@ const schema = (0, schema_1.makeExecutableSchema)({ typeDefs: type_defs_1.typeDe
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: 'https://bug-tracker-red.vercel.app',
+    origin: ['https://bug-tracker-red.vercel.app', 'http://localhost:3000'],
     credentials: true
 }));
 app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
@@ -39,7 +39,7 @@ app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
 app.enable('trust proxy');
 app.use((0, express_session_1.default)({
     store: new pgSession({ pool: db_1.pool }),
-    secret: process.env.SECRET,
+    secret: "",
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1209600000, sameSite: 'none', secure: true }
