@@ -29,20 +29,15 @@ const schema = (0, schema_1.makeExecutableSchema)({ typeDefs: type_defs_1.typeDe
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: ['https://bug-tracker-red.vercel.app', 'http://localhost:3000'],
-    credentials: true
+    origin: ["https://bug-tracker-red.vercel.app", "http://localhost:3000"],
+    credentials: true,
 }));
-app.use("/graphql", (0, express_graphql_1.graphqlHTTP)({
-    schema,
-    graphiql: false,
-}));
-app.enable('trust proxy');
 app.use((0, express_session_1.default)({
     store: new pgSession({ pool: db_1.pool }),
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1209600000, sameSite: 'none', secure: true }
+    cookie: { maxAge: 1209600000, sameSite: "none", secure: true },
 }));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
@@ -71,7 +66,7 @@ app.post("/register", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const checkUser = yield client.query("SELECT * FROM users where email= $1 or username= $2", [email, username]);
         console.log(checkUser.rows[0]);
         if (checkUser.rows[0])
-            res.send({ message: 'User already exists' });
+            res.send({ message: "User already exists" });
         else {
             yield client.query("INSERT INTO users(username, email, password) VALUES($1, $2, $3);", [username, email, hashedPassword]);
             client.release();
@@ -92,7 +87,7 @@ app.post("/register", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         }
     }
     catch (error) {
-        res.send({ message: 'An error has occurred' });
+        res.send({ message: "An error has occurred" });
     }
 }));
 app.post("/logout", (req, res, next) => {
@@ -102,7 +97,7 @@ app.post("/logout", (req, res, next) => {
             throw error;
         }
         req.logOut((err) => next(err));
-        res.clearCookie('connect.sid');
+        res.clearCookie("connect.sid");
         res.json({ success: true });
     });
 });
@@ -114,4 +109,13 @@ app.get("/user", (req, res) => {
     else
         res.json(null);
 });
-app.listen(process.env.PORT, () => console.log("server is running"));
+app.use("/graphql", (0, express_graphql_1.graphqlHTTP)((req) => {
+    return {
+        schema,
+        graphiql: false,
+        context: {
+            user: req.user,
+        },
+    };
+}));
+app.listen(process.env.PORT);

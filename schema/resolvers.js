@@ -14,8 +14,8 @@ const graphql_1 = require("graphql");
 const db_1 = require("../config/db");
 require("dotenv").config();
 exports.dateScalar = new graphql_1.GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
+    name: "Date",
+    description: "Date custom scalar type",
     serialize(value) {
         return `${value.getMonth() + 1}/${value.getDate()}/${value.getFullYear()}`;
     },
@@ -27,7 +27,7 @@ exports.dateScalar = new graphql_1.GraphQLScalarType({
             return new Date(parseInt(ast.value, 10));
         }
         return null;
-    }
+    },
 });
 exports.resolvers = {
     Date: exports.dateScalar,
@@ -43,7 +43,9 @@ exports.resolvers = {
             const totalTickets = yield db_1.pool.query("Select * from tickets where project_id = any($1)", ["{" + projectsID.join(",") + "}"]);
             return Object.assign(Object.assign({}, user.rows[0]), { projects: projects.rows, allTickets: totalTickets.rows });
         }),
-        users: () => __awaiter(void 0, void 0, void 0, function* () {
+        users: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+            if (context.user.role !== "admin")
+                throw new graphql_1.GraphQLError("not admin");
             const result = yield db_1.pool.query("Select id, username, email, role from users");
             return result.rows;
         }),
@@ -79,7 +81,9 @@ exports.resolvers = {
         }),
     },
     Mutation: {
-        createProject: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
+        createProject: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+            if (!context.user)
+                throw new graphql_1.GraphQLError("not authorized");
             const client = yield db_1.pool.connect();
             const query1 = "INSERT INTO projects(name, description) VALUES($1, $2) RETURNING *;";
             const result = yield client.query(query1, [
@@ -93,7 +97,9 @@ exports.resolvers = {
             client.release();
             return result.rows[0];
         }),
-        createTicket: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
+        createTicket: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+            if (!context.user)
+                throw new graphql_1.GraphQLError("not authorized");
             const ticket = args.input;
             const user_id = args.input.user_id;
             const query = `INSERT INTO tickets(name, description, type, status, priority, project_id
@@ -129,7 +135,9 @@ exports.resolvers = {
             yield db_1.pool.query(query, values);
             return null;
         }),
-        updateUser: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
+        updateUser: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
+            if (context.user.role !== "admin")
+                throw new graphql_1.GraphQLError("not admin");
             const user = yield db_1.pool.query("update users set role = $1 where id = $2 returning *", [args.role, args.id]);
             return user.rows[0];
         }),
@@ -144,7 +152,7 @@ exports.resolvers = {
                 ticket.priority,
                 ticket.project_id,
                 ticket.user_id,
-                ticket.id
+                ticket.id,
             ]);
             return user.rows[0];
         }),

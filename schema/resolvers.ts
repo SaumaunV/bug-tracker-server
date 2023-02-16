@@ -1,5 +1,5 @@
-import { GraphQLScalarType, Kind } from 'graphql';
-import { pool } from '../config/db'
+import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
+import { pool } from "../config/db";
 require("dotenv").config();
 
 type Project = {
@@ -23,9 +23,19 @@ type Ticket = {
   };
 };
 
+type User = {
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    password: string;
+    role: string;
+  };
+};
+
 export const dateScalar = new GraphQLScalarType({
-  name: 'Date',
-  description: 'Date custom scalar type',
+  name: "Date",
+  description: "Date custom scalar type",
   serialize(value: Date) {
     return `${value.getMonth() + 1}/${value.getDate()}/${value.getFullYear()}`;
   },
@@ -33,11 +43,11 @@ export const dateScalar = new GraphQLScalarType({
     return new Date(value);
   },
   parseLiteral(ast) {
-    if(ast.kind === Kind.INT) {
+    if (ast.kind === Kind.INT) {
       return new Date(parseInt(ast.value, 10));
     }
     return null;
-  }
+  },
 });
 
 export const resolvers = {
@@ -64,7 +74,8 @@ export const resolvers = {
         allTickets: totalTickets.rows,
       };
     },
-    users: async () => {
+    users: async (_: any, args: any, context: User) => {
+      if (context.user.role !== "admin") throw new GraphQLError("not admin");
       const result = await pool.query(
         "Select id, username, email, role from users"
       );
@@ -111,7 +122,8 @@ export const resolvers = {
     },
   },
   Mutation: {
-    createProject: async (_: any, args: Project) => {
+    createProject: async (_: any, args: Project, context: User) => {
+      if (!context.user) throw new GraphQLError("not authorized");
       const client = await pool.connect();
       const query1 =
         "INSERT INTO projects(name, description) VALUES($1, $2) RETURNING *;";
@@ -135,7 +147,8 @@ export const resolvers = {
       client.release();
       return result.rows[0];
     },
-    createTicket: async (_: any, args: Ticket) => {
+    createTicket: async (_: any, args: Ticket, context: User) => {
+      if (!context.user) throw new GraphQLError("not authorized");
       const ticket = args.input;
       const user_id = args.input.user_id;
       const query = `INSERT INTO tickets(name, description, type, status, priority, project_id
@@ -171,7 +184,12 @@ export const resolvers = {
       await pool.query(query, values);
       return null;
     },
-    updateUser: async (_: any, args: { role: string; id: string }) => {
+    updateUser: async (
+      _: any,
+      args: { role: string; id: string },
+      context: User
+    ) => {
+      if (context.user.role !== "admin") throw new GraphQLError("not admin");
       const user = await pool.query(
         "update users set role = $1 where id = $2 returning *",
         [args.role, args.id]
@@ -190,11 +208,14 @@ export const resolvers = {
         ticket.priority,
         ticket.project_id,
         ticket.user_id,
-        ticket.id
+        ticket.id,
       ]);
       return user.rows[0];
     },
-    addUsers: async (_: any, args: {input: {project_id: string, user_ids: string[]}}) => {
+    addUsers: async (
+      _: any,
+      args: { input: { project_id: string; user_ids: string[] } }
+    ) => {
       const projectID = args.input.project_id;
       args.input.user_ids.forEach((id) =>
         pool.query(
@@ -206,4 +227,3 @@ export const resolvers = {
     },
   },
 };
-
