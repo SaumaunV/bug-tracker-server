@@ -75,7 +75,7 @@ export const resolvers = {
       };
     },
     users: async (_: any, args: any, context: User) => {
-      if (context.user.role !== "admin") throw new GraphQLError("not admin");
+      if (!context.user.role) throw new GraphQLError("not authorized");
       const result = await pool.query(
         "Select id, username, email, role from users"
       );

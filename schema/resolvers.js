@@ -44,8 +44,8 @@ exports.resolvers = {
             return Object.assign(Object.assign({}, user.rows[0]), { projects: projects.rows, allTickets: totalTickets.rows });
         }),
         users: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-            if (context.user.role !== "admin")
-                throw new graphql_1.GraphQLError("not admin");
+            if (!context.user.role)
+                throw new graphql_1.GraphQLError("not authorized");
             const result = yield db_1.pool.query("Select id, username, email, role from users");
             return result.rows;
         }),
