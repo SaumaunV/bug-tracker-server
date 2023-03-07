@@ -35,7 +35,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.enable("trust proxy");
 app.use(
   session({
     store: new pgSession({ pool: pool }),

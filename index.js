@@ -32,6 +32,7 @@ app.use((0, cors_1.default)({
     origin: ["https://bug-tracker-red.vercel.app", "http://localhost:3000"],
     credentials: true,
 }));
+app.enable("trust proxy");
 app.use((0, express_session_1.default)({
     store: new pgSession({ pool: db_1.pool }),
     secret: process.env.SECRET,
