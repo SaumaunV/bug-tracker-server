@@ -94,10 +94,7 @@ exports.resolvers = {
             var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!context.user)
-                            throw new graphql_1.GraphQLError("not authorized");
-                        return [4 /*yield*/, db_1.pool.query("Select id, username, email, role from users")];
+                    case 0: return [4 /*yield*/, db_1.pool.query("Select id, username, email, role from users")];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
@@ -176,10 +173,7 @@ exports.resolvers = {
             var client, query1, result, query2, result2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!context.user)
-                            throw new graphql_1.GraphQLError("not authorized");
-                        return [4 /*yield*/, db_1.pool.connect()];
+                    case 0: return [4 /*yield*/, db_1.pool.connect()];
                     case 1:
                         client = _a.sent();
                         query1 = "INSERT INTO projects(name, description) VALUES($1, $2) RETURNING *;";
@@ -209,8 +203,6 @@ exports.resolvers = {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!context.user)
-                            throw new graphql_1.GraphQLError("not authorized");
                         ticket = args.input;
                         user_id = args.input.user_id;
                         query = "INSERT INTO tickets(name, description, type, status, priority, project_id\n        ".concat(user_id ? ", user_id" : "", ")\n        VALUES($1, $2, $3, $4, $5, $6 ").concat(user_id ? ", $7" : "", ");");
@@ -276,10 +268,7 @@ exports.resolvers = {
             var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (context.user.role !== "admin")
-                            throw new graphql_1.GraphQLError("not admin");
-                        return [4 /*yield*/, db_1.pool.query("update users set role = $1 where id = $2 returning *", [args.role, args.id])];
+                    case 0: return [4 /*yield*/, db_1.pool.query("update users set role = $1 where id = $2 returning *", [args.role, args.id])];
                     case 1:
                         user = _a.sent();
                         return [2 /*return*/, user.rows[0]];
