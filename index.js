@@ -38,7 +38,11 @@ app.use((0, express_session_1.default)({
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1209600000, sameSite: "none", secure: true },
+    cookie: {
+        maxAge: 1209600000,
+        sameSite: "none",
+        secure: true
+    },
 }));
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
@@ -114,9 +118,7 @@ app.use("/graphql", (0, express_graphql_1.graphqlHTTP)((req) => {
     return {
         schema,
         graphiql: false,
-        context: {
-            user: req.user,
-        },
+        context: { user: req.user },
     };
 }));
 app.listen(process.env.PORT);

@@ -75,6 +75,7 @@ export const resolvers = {
       };
     },
     users: async (_: any, args: any, context: User) => {
+      if (!context.user) throw new GraphQLError("not authorized");
       const result = await pool.query(
         "Select id, username, email, role from users"
       );
@@ -122,6 +123,7 @@ export const resolvers = {
   },
   Mutation: {
     createProject: async (_: any, args: Project, context: User) => {
+      if (!context.user) throw new GraphQLError("not authorized");
       const client = await pool.connect();
       const query1 =
         "INSERT INTO projects(name, description) VALUES($1, $2) RETURNING *;";
@@ -146,6 +148,7 @@ export const resolvers = {
       return result.rows[0];
     },
     createTicket: async (_: any, args: Ticket, context: User) => {
+      if (!context.user) throw new GraphQLError("not authorized");
       const ticket = args.input;
       const user_id = args.input.user_id;
       const query = `INSERT INTO tickets(name, description, type, status, priority, project_id
@@ -186,6 +189,7 @@ export const resolvers = {
       args: { role: string; id: string },
       context: User
     ) => {
+      if (!context.user) throw new GraphQLError("not authorized");
       const user = await pool.query(
         "update users set role = $1 where id = $2 returning *",
         [args.role, args.id]

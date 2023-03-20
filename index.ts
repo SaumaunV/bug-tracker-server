@@ -42,7 +42,11 @@ app.use(
     secret: process.env.SECRET!,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1209600000, sameSite: "none", secure: true },
+    cookie: {
+      maxAge: 1209600000,
+      sameSite: "none",
+      secure: true
+    },
   })
 );
 
@@ -58,9 +62,9 @@ app.post("/login", (req, res, next) => {
       req.logIn(user, (err) => {
         if (err) return next(err);
         const { id, username, email, role } = req.user!;
-        res.send({ id, username, email, role });
+        res.send({ id, username, email, role });     
       });
-    }
+    }    
   })(req, res, next);
 });
 
@@ -122,9 +126,7 @@ app.use(
     return {
       schema,
       graphiql: false,
-      context: {
-        user: req.user,
-      },
+      context: { user: req.user },
     };
   })
 );
