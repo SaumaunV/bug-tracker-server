@@ -143,7 +143,7 @@ exports.resolvers = {
         }),
         updateTicket: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const ticket = args.input;
-            const query = "update tickets set name = $1, description = $2, type = $3, status = $4, priority = $5, project_id = $6 user_id = $7 where id = $8 returning *";
+            const query = "update tickets set name = $1, description = $2, type = $3, status = $4, priority = $5, project_id = $6, user_id = $7 where id = $8 returning *";
             const user = yield db_1.pool.query(query, [
                 ticket.name,
                 ticket.description,

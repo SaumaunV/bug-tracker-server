@@ -199,7 +199,7 @@ export const resolvers = {
     updateTicket: async (_: any, args: Ticket) => {
       const ticket = args.input;
       const query =
-        "update tickets set name = $1, description = $2, type = $3, status = $4, priority = $5, project_id = $6 user_id = $7 where id = $8 returning *";
+        "update tickets set name = $1, description = $2, type = $3, status = $4, priority = $5, project_id = $6, user_id = $7 where id = $8 returning *";
       const user = await pool.query(query, [
         ticket.name,
         ticket.description,
