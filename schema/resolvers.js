@@ -112,8 +112,9 @@ exports.resolvers = {
                 ticket.status,
                 ticket.priority,
                 ticket.project_id,
-                ticket.user_id,
             ];
+            if (user_id)
+                values.push(ticket.user_id);
             yield db_1.pool.query(query, values);
             return ticket;
         }),

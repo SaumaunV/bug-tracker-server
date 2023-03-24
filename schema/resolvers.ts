@@ -161,8 +161,8 @@ export const resolvers = {
         ticket.status,
         ticket.priority,
         ticket.project_id,
-        ticket.user_id,
       ];
+      if(user_id) values.push(ticket.user_id);
       await pool.query(query, values);
       return ticket;
     },
