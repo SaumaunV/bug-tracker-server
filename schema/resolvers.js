@@ -17,7 +17,10 @@ exports.dateScalar = new graphql_1.GraphQLScalarType({
     name: "Date",
     description: "Date custom scalar type",
     serialize(value) {
-        return `${value.getMonth() + 1}/${value.getDate()}/${value.getFullYear()}`;
+        const date = new Date(
+          value.setMinutes(value.getMinutes() - value.getTimezoneOffset())
+        );
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     },
     parseValue(value) {
         return new Date(value);
