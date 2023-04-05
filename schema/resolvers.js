@@ -20,7 +20,7 @@ exports.dateScalar = new graphql_1.GraphQLScalarType({
         const date = new Date(
           value.setMinutes(value.getMinutes() - value.getTimezoneOffset())
         );
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+        return date;
     },
     parseValue(value) {
         return new Date(value);
