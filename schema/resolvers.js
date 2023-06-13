@@ -17,9 +17,7 @@ exports.dateScalar = new graphql_1.GraphQLScalarType({
     name: "Date",
     description: "Date custom scalar type",
     serialize(value) {
-        const date = new Date(
-          value.setMinutes(value.getMinutes() - value.getTimezoneOffset())
-        );
+        const date = new Date(value.setMinutes(value.getMinutes() - value.getTimezoneOffset()));
         return date;
     },
     parseValue(value) {
@@ -144,6 +142,12 @@ exports.resolvers = {
                 throw new graphql_1.GraphQLError("not authorized");
             const user = yield db_1.pool.query("update users set role = $1 where id = $2 returning *", [args.role, args.id]);
             return user.rows[0];
+        }),
+        updateProject: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
+            const { name, description, id } = args;
+            const query = "update projects set name = $1, description = $2 where id = $3 returning *";
+            const updatedProject = yield db_1.pool.query(query, [name, description, id]);
+            return updatedProject.rows[0];
         }),
         updateTicket: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const ticket = args.input;

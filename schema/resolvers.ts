@@ -199,6 +199,12 @@ export const resolvers = {
       );
       return user.rows[0];
     },
+    updateProject: async(_: any, args: {name: string, description: string; id: string}) => {
+      const {name, description, id} = args;
+      const query = "update projects set name = $1, description = $2 where id = $3 returning *";
+      const updatedProject = await pool.query(query, [ name, description, id ]);
+      return updatedProject.rows[0];
+    },
     updateTicket: async (_: any, args: Ticket) => {
       const ticket = args.input;
       const query =

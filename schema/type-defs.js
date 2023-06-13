@@ -52,6 +52,7 @@ exports.typeDefs = `#graphql
       deleteTicket(id: ID!): Ticket
       deleteUser(id: ID!): User
       updateUser(role: String!, id: ID!): User
+      updateProject(name: String!, description: String, id: ID!): Project
       updateTicket(input: UpdateTicketInput!): Ticket
       addUsers(input: AddUsersInput!): [User!]
     }
